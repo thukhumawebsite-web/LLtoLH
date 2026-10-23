@@ -2,18 +2,18 @@
 <html lang="my" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Trading Decision Flow</title>
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase Official UMD CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   
-  <!-- Inter & Plus Jakarta Sans Fonts -->
+  <!-- Padauk Font for Myanmar Text -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -21,133 +21,98 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'Padauk', 'sans-serif'],
-          },
-          colors: {
-            trade: {
-              bg: '#080c14',
-              card: '#0e1626',
-              border: '#1e293b',
-              accent: '#3b82f6',
-              glow: 'rgba(59, 130, 246, 0.15)'
-            }
+            sans: ['Padauk', 'sans-serif'],
           }
         }
       }
     }
   </script>
   <style>
-    /* Custom Modern Scrollbar */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    .dark ::-webkit-scrollbar-track { background: #080c14; }
-    .dark ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
+    /* Thin Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    .dark ::-webkit-scrollbar-track { background: #060911; }
+    .dark ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-    
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     * { -webkit-tap-highlight-color: transparent; }
-    
-    /* Glassmorphism Effect */
-    .glass-card {
-      background: rgba(14, 22, 38, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .light .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-    }
-    
-    /* Subtle Glow Effects */
-    .glow-blue {
-      box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
-    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 dark:bg-[#080c14] dark:text-slate-100 flex flex-col justify-between selection:bg-blue-600 selection:text-white font-sans antialiased transition-colors duration-200 pb-safe">
+<body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-[#060911] dark:text-slate-100 flex flex-col justify-between selection:bg-blue-600 selection:text-white font-sans antialiased transition-colors duration-200">
 
-  <!-- TOP APP BAR / HEADER -->
-  <header class="border-b border-slate-200/80 bg-white/80 dark:border-slate-800/80 dark:bg-[#080c14]/80 backdrop-blur-xl sticky top-0 z-40 px-4 py-3 transition-colors duration-200 shadow-sm">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3 cursor-pointer active:scale-95 transition" onclick="navigateTo('step1')">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-blue-500/30 flex-shrink-0">
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-200 bg-white/95 dark:border-slate-800/80 dark:bg-[#080d1a]/95 backdrop-blur-md sticky top-0 z-40 px-3.5 sm:px-6 py-2.5 sm:py-3 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onclick="navigateTo('step1')">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/20 flex-shrink-0">
           📈
         </div>
         <div>
-          <h1 class="font-extrabold text-xs sm:text-sm tracking-wider uppercase bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent leading-none">
-            TRADING FLOW
-          </h1>
-          <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Decision Engine</p>
+          <h1 class="font-extrabold text-xs sm:text-sm tracking-wider uppercase text-slate-900 dark:text-slate-100 leading-none">TRADING DECISION FLOW</h1>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Step-by-Step Checklist</p>
         </div>
       </div>
       
-      <!-- Right Action Controls -->
-      <div class="flex items-center gap-2">
-        <!-- Theme Toggle -->
-        <button type="button" onclick="toggleTheme()" class="p-2 sm:px-3 sm:py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-700/60 transition cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-sm" title="Toggle Theme">
-          <span id="themeIcon" class="text-sm">🌙</span>
-          <span id="themeText" class="hidden sm:inline text-xs font-semibold">Dark</span>
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Theme Toggle Button -->
+        <button type="button" onclick="toggleTheme()" class="p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-300 dark:border-slate-700/60 transition cursor-pointer flex items-center gap-1 active:scale-95" title="Toggle Theme">
+          <span id="themeIcon" class="text-xs sm:text-sm">🌙</span>
+          <span id="themeText" class="hidden sm:inline text-[11px] font-medium">Dark</span>
         </button>
 
-        <!-- Admin Control Button -->
-        <button type="button" onclick="openAdminModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition shadow-md shadow-blue-600/25 cursor-pointer active:scale-95">
-          <span class="text-xs">⚙️</span>
-          <span class="hidden sm:inline">Admin</span>
+        <!-- Admin Button -->
+        <button type="button" onclick="openAdminModal()" class="px-2.5 sm:px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px] sm:text-xs rounded-lg flex items-center gap-1 transition shadow-sm cursor-pointer active:scale-95">
+          <span>⚙️</span>
+          <span>Admin</span>
         </button>
 
-        <!-- Home Quick Link -->
-        <button type="button" onclick="navigateTo('step1')" class="p-2 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-700/60 transition cursor-pointer active:scale-95 shadow-sm" title="Home">
+        <!-- Reset to Home Button -->
+        <button type="button" onclick="navigateTo('step1')" class="p-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-300 dark:border-slate-700/60 transition cursor-pointer active:scale-95" title="Home">
           🏠
         </button>
       </div>
     </div>
   </header>
 
-  <!-- BREADCRUMBS & STEP TRACKER BAR -->
-  <div class="sticky top-[53px] sm:top-[61px] z-30 bg-white/90 border-b border-slate-200/80 dark:bg-[#080c14]/90 dark:border-slate-800/80 backdrop-blur-xl py-2.5 px-4 shadow-sm transition-colors duration-200">
-    <div class="max-w-5xl mx-auto flex flex-col gap-1.5">
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-        <span id="stepBadge" class="text-[10px] sm:text-xs font-black tracking-wider text-blue-600 bg-blue-50 border border-blue-200/80 dark:text-blue-400 dark:bg-blue-950/60 dark:border-blue-800/60 px-2.5 py-0.5 rounded-lg uppercase font-mono whitespace-nowrap flex-shrink-0">
-          STEP 1
+  <!-- STICKY STEP TITLE & BREADCRUMBS BAR -->
+  <div class="sticky top-[49px] sm:top-[57px] z-30 bg-white/95 border-b border-slate-200 dark:bg-[#060911]/95 dark:border-slate-800/60 backdrop-blur-md py-2 px-3.5 sm:px-6 shadow-sm transition-colors duration-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-1.5 sm:gap-2 mb-0.5 overflow-x-auto no-scrollbar py-0.5">
+        <span id="stepBadge" class="text-[9px] sm:text-[10px] font-bold tracking-wider text-blue-600 bg-blue-50 border border-blue-200 dark:text-blue-400 dark:bg-blue-950/80 dark:border-blue-800/80 px-2 py-0.5 rounded uppercase font-mono whitespace-nowrap flex-shrink-0">
+          STEP 1: TREND DIRECTION
         </span>
-        <nav id="breadcrumbs" class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap font-medium no-scrollbar"></nav>
+        <nav id="breadcrumbs" class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap"></nav>
       </div>
-      <h2 id="pageTitle" class="text-base sm:text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight line-clamp-1">
-        Loading...
-      </h2>
+      <h2 id="pageTitle" class="text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight line-clamp-1">Loading...</h2>
     </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-5xl mx-auto w-full px-4 py-4 sm:py-6 flex-1 space-y-4 sm:space-y-6">
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-7xl mx-auto w-full px-3.5 sm:px-6 py-4 flex-1 space-y-4 sm:space-y-6">
 
-    <!-- Description Card -->
-    <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm">
-      <p id="pageDesc" class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed font-medium"></p>
-    </div>
-
-    <!-- BUTTONS GRID (MOBILE OPTIMIZED TOUCH CARDS) -->
-    <div id="buttonsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <!-- Description Paragraph -->
+    <p id="pageDesc" class="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed font-normal px-0.5"></p>
 
     <!-- EXECUTION CHECKLIST CARD -->
-    <div id="checklistCard" class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm">
-      <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-3">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+    <div id="checklistCard" class="bg-white border border-slate-200 text-slate-700 dark:bg-[#0b1222] dark:border-slate-800/90 dark:text-slate-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm transition-colors duration-200">
+      <div class="flex items-center gap-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-3">
+        <span>☑</span>
         <span>EXECUTION CHECKLIST</span>
       </div>
-      <div id="checklistsList" class="space-y-2.5 text-xs sm:text-sm"></div>
+      <div id="checklistsList" class="space-y-2 text-xs sm:text-sm"></div>
     </div>
 
-    <!-- VIDEO PLAYER SECTION (COMPACT & SLIM AT BOTTOM) -->
-    <div id="videoSection" class="w-full max-w-lg mx-auto bg-black border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl relative aspect-video max-h-[220px] sm:max-h-[260px] glow-blue">
+    <!-- BUTTONS GRID (Exact match to uploaded screenshot layout) -->
+    <div id="buttonsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
+
+    <!-- VIDEO CONTAINER (Placed neatly at the bottom) -->
+    <div id="videoSection" class="mt-6 w-full max-w-2xl mx-auto bg-black border border-slate-300 dark:border-slate-800 rounded-xl sm:rounded-2xl overflow-hidden shadow-xl relative aspect-video max-h-[320px]">
       <div id="videoContainer" class="w-full h-full flex items-center justify-center"></div>
       
-      <!-- Compact Mute/Unmute Floating Button -->
-      <button id="soundToggleBtn" onclick="toggleAudio(event)" class="absolute bottom-2.5 right-2.5 z-20 bg-black/80 hover:bg-black border border-white/20 text-white text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-md shadow-lg active:scale-95 transition">
+      <!-- Audio Toggle Button -->
+      <button id="soundToggleBtn" onclick="toggleAudio(event)" class="absolute bottom-2.5 right-2.5 z-20 bg-slate-950/80 hover:bg-slate-900 border border-slate-700/80 text-white text-[11px] sm:text-xs px-2.5 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur shadow-lg active:scale-95 transition">
         <span id="soundIcon">🔇</span>
         <span id="soundText">Tap to Unmute</span>
       </button>
@@ -156,76 +121,75 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-slate-200 dark:border-slate-800/80 bg-white/50 dark:bg-[#080c14]/50 py-4 px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-    <p class="font-semibold">Trading Decision Engine &copy; 2026</p>
-    <p class="text-[10px] text-slate-400">Strictly follow your risk management rules</p>
+  <footer class="border-t border-slate-200 bg-white text-slate-500 dark:border-slate-800/60 dark:bg-[#060911] dark:text-slate-500 py-3 px-4 sm:px-6 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center sm:text-left transition-colors duration-200">
+    <p>Trading Decision Engine &copy; 2026</p>
+    <p class="text-slate-400 text-[10px]">Always calculate risk management before entering position</p>
   </footer>
 
-  <!-- ADMIN MANAGEMENT MODAL -->
-  <div id="adminModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-    <div class="bg-white dark:bg-[#0e1626] border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-2xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl text-slate-900 dark:text-slate-100">
+  <!-- ADMIN EDIT MODAL -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="bg-[#0c1322] border border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-2xl w-full max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl text-slate-100">
       
       <!-- Modal Header -->
-      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+      <div class="p-3.5 sm:p-4 border-b border-slate-800 flex justify-between items-center">
         <div>
-          <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
+          <h3 class="font-bold text-sm sm:text-base flex items-center gap-1.5 text-slate-200">
             <span>⚙️</span> Management Panel
           </h3>
-          <p id="adminCurrentPageIndicator" class="text-[11px] text-blue-500 font-mono mt-0.5"></p>
+          <p id="adminCurrentPageIndicator" class="text-[10px] sm:text-xs text-blue-400 font-mono mt-0.5"></p>
         </div>
-        <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg p-1">✕</button>
+        <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
       </div>
 
-      <!-- Authentication View -->
-      <div id="adminAuthSection" class="p-6 text-center space-y-3">
-        <p class="text-xs sm:text-sm font-medium">Admin Password ကို ရိုက်ထည့်ပါ</p>
-        <input type="password" id="adminPassInput" class="w-full max-w-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-center focus:outline-none focus:border-blue-500" placeholder="Enter Password">
-        <div>
-          <button type="button" onclick="verifyAdmin()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm px-6 py-2.5 rounded-xl font-semibold transition active:scale-95 shadow-md shadow-blue-600/30">Login Admin</button>
-        </div>
-        <p id="adminAuthErr" class="text-rose-500 text-xs hidden font-medium">Password မှားယွင်းနေပါသည်။</p>
+      <!-- Password View -->
+      <div id="adminAuthSection" class="p-6 sm:p-8 text-center">
+        <p class="text-slate-300 text-xs sm:text-sm mb-4">Admin Password ကို ရိုက်ထည့်ပါ</p>
+        <input type="password" id="adminPassInput" class="w-full max-w-xs bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500 text-center text-white" placeholder="Enter Password">
+        <br>
+        <button type="button" onclick="verifyAdmin()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm px-6 py-2 rounded-xl font-medium transition cursor-pointer">Login Admin</button>
+        <p id="adminAuthErr" class="text-rose-400 text-xs mt-2 hidden">Password မှားယွင်းနေပါသည်။</p>
       </div>
 
-      <!-- Admin Editor View -->
-      <div id="adminContentSection" class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 hidden text-xs sm:text-sm">
-        <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-600 dark:text-blue-400 flex items-center justify-between text-xs">
-          <span>Editing Page: <strong id="adminPageIdDisplay" class="font-mono"></strong></span>
-          <span>Context-Aware</span>
+      <!-- Admin Content Form -->
+      <div id="adminContentSection" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 flex-1 hidden text-xs">
+        <div class="p-2.5 bg-blue-950/30 border border-blue-800/40 rounded-xl text-blue-300 flex items-center justify-between">
+          <span>Editing ID: <strong id="adminPageIdDisplay" class="font-mono text-white"></strong></span>
+          <span class="text-[10px] text-slate-400">Context-Aware Edit</span>
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-2.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Page Title</label>
-            <input type="text" id="editPageTitle" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm">
+            <label class="block text-slate-400 mb-1">Page Title</label>
+            <input type="text" id="editPageTitle" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Description</label>
-            <textarea id="editPageDesc" rows="2" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm"></textarea>
+            <label class="block text-slate-400 mb-1">Description</label>
+            <textarea id="editPageDesc" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm"></textarea>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Video URL (MP4 / Direct Link)</label>
-            <input type="text" id="editPageVideo" placeholder="https://..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm">
+            <label class="block text-slate-400 mb-1">Video URL (MP4 Link / Embed)</label>
+            <input type="text" id="editPageVideo" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-1">Checklist (တစ်ကြောင်းလျှင် တစ်ခု)</label>
-            <textarea id="editChecklist" rows="3" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 font-mono text-xs"></textarea>
+            <label class="block text-emerald-400 mb-1">Checklist (တစ်ကြောင်းလျှင် တစ်ခု)</label>
+            <textarea id="editChecklist" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 font-mono text-[11px]"></textarea>
           </div>
         </div>
 
-        <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
-          <div class="flex justify-between items-center mb-3">
-            <h4 class="font-bold text-xs sm:text-sm">Action Buttons</h4>
-            <button type="button" onclick="addNewButtonField()" class="bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600/20 px-3 py-1 rounded-lg font-semibold text-xs border border-blue-500/20">
-              + Add Button
+        <div class="border-t border-slate-800 pt-3">
+          <div class="flex justify-between items-center mb-2.5">
+            <h4 class="font-semibold text-slate-200">Action Buttons</h4>
+            <button type="button" onclick="addNewButtonField()" class="bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded-lg">
+              + ခလုတ်ထည့်မည်
             </button>
           </div>
-          <div id="adminButtonsList" class="space-y-3"></div>
+          <div id="adminButtonsList" class="space-y-2.5"></div>
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div id="adminFooter" class="p-3.5 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-950/50 hidden">
-        <button type="button" onclick="saveChangesToSupabase()" id="saveBtn" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold rounded-xl transition shadow-md shadow-blue-600/30 active:scale-95">
+      <div id="adminFooter" class="p-3.5 sm:p-4 border-t border-slate-800 flex justify-end items-center bg-slate-950/60 hidden">
+        <button type="button" onclick="saveChangesToSupabase()" id="saveBtn" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition cursor-pointer shadow-lg active:scale-95">
           Save All Changes
         </button>
       </div>
@@ -242,7 +206,7 @@
     let currentVideoElement = null;
     let isUserAudioAllowed = false;
 
-    // THEME CONTROLLER
+    // THEME CONTROLS (LIGHT / DARK SWITCHER)
     function initTheme() {
       const savedTheme = localStorage.getItem('theme') || 'dark';
       if (savedTheme === 'light') {
@@ -267,7 +231,7 @@
       if (text) text.textContent = isDark ? 'Dark' : 'Light';
     }
 
-    // AUDIO CONTROLLER
+    // AUDIO UNMUTE CONTROLS
     function toggleAudio(e) {
       if (e) e.stopPropagation();
       if (!currentVideoElement) return;
@@ -290,21 +254,22 @@
     }
 
     function setupGlobalAudioUnlock() {
-      const unlock = () => {
+      const unlockAudioOnFirstTouch = () => {
         if (!isUserAudioAllowed && currentVideoElement) {
           currentVideoElement.muted = false;
           currentVideoElement.play().catch(() => {});
           isUserAudioAllowed = true;
           updateSoundButtonUI(false);
         }
-        document.removeEventListener('click', unlock);
-        document.removeEventListener('touchstart', unlock);
+        document.removeEventListener('click', unlockAudioOnFirstTouch);
+        document.removeEventListener('touchstart', unlockAudioOnFirstTouch);
       };
-      document.addEventListener('click', unlock, { once: true });
-      document.addEventListener('touchstart', unlock, { once: true });
+
+      document.addEventListener('click', unlockAudioOnFirstTouch, { once: true });
+      document.addEventListener('touchstart', unlockAudioOnFirstTouch, { once: true });
     }
 
-    // MODAL CONTROL
+    // ADMIN MODAL CONTROLS
     function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
       if (isAdminLoggedIn) loadCurrentPageForEdit();
@@ -313,7 +278,7 @@
       document.getElementById('adminModal').classList.add('hidden');
     }
 
-    // ROUTING & POPSTATE
+    // BROWSER HISTORY CONTROLS
     window.addEventListener('popstate', (event) => {
       const stepId = event.state?.stepId || getStepFromUrl() || 'step1';
       syncHistoryStack(stepId);
@@ -334,7 +299,7 @@
       }
     }
 
-    // SYSTEM INITIALIZATION
+    // SYSTEM INIT
     async function initSystem() {
       initTheme();
 
@@ -343,7 +308,7 @@
         if (!supabaseLib) throw new Error("Supabase Library load မဖြစ်ပါ။");
 
         const res = await fetch('/api/config');
-        if (!res.ok) throw new Error(`/api/config Error (${res.status})`);
+        if (!res.ok) throw new Error(`/api/config API route မရှိပါ (${res.status})`);
         const config = await res.json();
 
         supabaseClient = supabaseLib.createClient(config.supabaseUrl, config.supabaseKey);
@@ -370,13 +335,13 @@
         window.history.pushState({ stepId: pageId }, '', `?step=${pageId}`);
       }
 
-      let { data: page } = await supabaseClient.from('pages').select('*').eq('id', pageId).maybeSingle();
+      let { data: page, error } = await supabaseClient.from('pages').select('*').eq('id', pageId).maybeSingle();
 
       if (!page) {
         const newPageData = {
           id: pageId,
           title: `Step: ${pageId.toUpperCase()}`,
-          description: `ဤ ${pageId} အတွက် အချက်အလက်များကို Admin Panel မှ ထည့်သွင်းနိုင်ပါသည်။`,
+          description: `ဤ ${pageId} အတွက် ရှင်းလင်းချက်နှင့် ခလုတ်များကို Admin Panel မှ ထည့်သွင်းနိုင်ပါသည်။`,
           video_url: '',
           checklist: []
         };
@@ -384,12 +349,12 @@
         page = newPageData;
       }
 
-      // Title & Badge
-      document.getElementById('stepBadge').textContent = (page.id === 'step1') ? "STEP 1" : page.id.toUpperCase();
+      // Step Badge & Title
+      document.getElementById('stepBadge').textContent = (page.id === 'step1') ? "STEP 1: TREND DIRECTION" : page.id.toUpperCase();
       document.getElementById('pageTitle').textContent = page.title;
       document.getElementById('pageDesc').textContent = page.description || '';
 
-      // Video Player Setup
+      // Video Setup
       const videoSec = document.getElementById('videoSection');
       const videoCont = document.getElementById('videoContainer');
       const soundBtn = document.getElementById('soundToggleBtn');
@@ -431,7 +396,8 @@
         soundBtn.classList.add('hidden');
       }
 
-      // Checklist Render
+      // Checklist Setup
+      const clCard = document.getElementById('checklistCard');
       const clList = document.getElementById('checklistsList');
       clList.innerHTML = '';
 
@@ -443,44 +409,44 @@
 
       items.forEach(text => {
         const row = document.createElement('div');
-        row.className = "flex items-start gap-2 text-slate-700 dark:text-slate-300 font-medium";
-        row.innerHTML = `<span class="w-4 h-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[10px] text-emerald-500 font-extrabold flex-shrink-0 mt-0.5">✓</span><span>${text}</span>`;
+        row.className = "flex items-center gap-2 text-slate-600 dark:text-slate-300";
+        row.innerHTML = `<span class="w-4 h-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex-shrink-0">✓</span><span class="text-xs sm:text-sm">${text}</span>`;
         clList.appendChild(row);
       });
 
-      // Buttons Render
+      // Buttons Grid Rendering (Exact Match to uploaded screenshot)
       const { data: buttons } = await supabaseClient.from('buttons').select('*').eq('page_id', pageId).order('order_index');
       const grid = document.getElementById('buttonsGrid');
       grid.innerHTML = '';
 
       if (!buttons || buttons.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-1 sm:col-span-2 lg:col-span-3 p-6 text-center glass-card rounded-2xl text-slate-400 text-xs sm:text-sm">
-            💡 ဤ Page တွင် ခလုတ်များ မရှိသေးပါ။ ညာဘက်အပေါ်ရှိ <strong>Admin Panel</strong> မှ ထည့်သွင်းပေးပါ။
+          <div class="col-span-1 sm:col-span-2 lg:col-span-4 p-6 text-center bg-white border border-dashed border-slate-300 dark:bg-[#0c1322] dark:border-slate-800 rounded-xl text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
+            💡 ဤ Page တွင် Option ခလုတ်များ မရှိသေးပါ။ ညာဘက်အပေါ်ရှိ <strong>Admin Panel</strong> ကိုနှိပ်၍ ထည့်သွင်းနိုင်ပါသည်။
           </div>`;
       } else {
         buttons.forEach(btn => {
           const card = document.createElement('div');
           card.onclick = () => navigateTo(btn.target_step);
-          card.className = "glass-card rounded-2xl p-3.5 sm:p-4 cursor-pointer transition-all duration-200 active:scale-[0.98] sm:hover:-translate-y-1 sm:hover:border-blue-500/50 flex flex-col justify-between group";
+          card.className = "bg-white border border-slate-200 text-slate-800 shadow-sm hover:shadow-md hover:border-blue-500/60 dark:bg-[#0b1222] dark:border-slate-800/80 dark:text-slate-100 rounded-xl sm:rounded-2xl p-3.5 sm:p-4 cursor-pointer transition-all duration-200 active:scale-95 flex flex-col justify-between group";
 
-          const badgeStyle = btn.tag_color === 'green' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                             btn.tag_color === 'red' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
-                             btn.tag_color === 'amber' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                             'bg-blue-500/10 text-blue-500 border-blue-500/20';
+          const badgeColor = btn.tag_color === 'green' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' :
+                             btn.tag_color === 'red' ? 'bg-rose-500/10 text-rose-500 border-rose-500/30' :
+                             btn.tag_color === 'amber' ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' :
+                             'bg-blue-500/10 text-blue-500 border-blue-500/30';
 
           card.innerHTML = `
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-md border uppercase tracking-wider ${badgeStyle}">${btn.tag || 'OPTION'}</span>
-                <span class="text-slate-400 group-hover:text-blue-500 transition text-xs font-bold">➔</span>
+                <span class="text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded border uppercase tracking-wider ${badgeColor}">${btn.tag || 'OPTION'}</span>
+                <span class="text-slate-400 group-hover:text-blue-500 transition text-xs">↗</span>
               </div>
-              <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-slate-100 mb-1 group-hover:text-blue-500 transition leading-snug">${btn.label}</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2.5 line-clamp-2">${btn.subtitle || ''}</p>
+              <h3 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-100 mb-1 group-hover:text-blue-500 transition leading-tight">${btn.label}</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 line-clamp-1">${btn.subtitle || ''}</p>
             </div>
             ${btn.image_url ? `
-              <div class="w-full h-28 sm:h-36 bg-slate-900/40 rounded-xl p-1.5 flex items-center justify-center overflow-hidden border border-white/5">
-                <img src="${btn.image_url}" class="max-h-full max-w-full object-contain rounded-lg">
+              <div class="w-full h-32 sm:h-40 bg-white rounded-xl p-2 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-800">
+                <img src="${btn.image_url}" class="max-h-full max-w-full object-contain">
               </div>
             ` : ''}
           `;
@@ -507,7 +473,7 @@
       bc.innerHTML = '';
       historyStack.forEach((step, idx) => {
         const item = document.createElement('span');
-        item.className = `cursor-pointer transition ${idx === historyStack.length - 1 ? 'text-blue-500 font-bold' : 'hover:text-slate-900 text-slate-400 dark:hover:text-slate-200'}`;
+        item.className = `cursor-pointer transition ${idx === historyStack.length - 1 ? 'text-blue-600 dark:text-blue-400 font-bold' : 'hover:text-slate-900 text-slate-500 dark:hover:text-slate-200 dark:text-slate-400'}`;
         item.textContent = step;
         item.onclick = () => {
           historyStack = historyStack.slice(0, idx + 1);
@@ -517,8 +483,8 @@
 
         if (idx < historyStack.length - 1) {
           const sep = document.createElement('span');
-          sep.textContent = '›';
-          sep.className = 'text-slate-500 select-none px-0.5';
+          sep.textContent = '>';
+          sep.className = 'text-slate-400 dark:text-slate-600 select-none text-xs';
           bc.appendChild(sep);
         }
       });
@@ -545,7 +511,7 @@
 
     async function loadCurrentPageForEdit() {
       const pageId = currentStepId;
-      document.getElementById('adminCurrentPageIndicator').textContent = `ID: ${pageId}`;
+      document.getElementById('adminCurrentPageIndicator').textContent = `Editing: ${pageId}`;
       document.getElementById('adminPageIdDisplay').textContent = pageId;
 
       const { data: page } = await supabaseClient.from('pages').select('*').eq('id', pageId).single();
@@ -567,27 +533,39 @@
 
       currentEditButtons.forEach((btn, i) => {
         const div = document.createElement('div');
-        div.className = "bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 space-y-2 text-xs";
+        div.className = "bg-slate-950 border border-slate-800 rounded-xl p-2.5 sm:p-3 text-xs space-y-2";
         div.innerHTML = `
           <div class="flex justify-between items-center">
-            <span class="text-blue-500 font-bold">Button #${i + 1}</span>
-            <button type="button" onclick="removeButton(${i})" class="text-rose-500 hover:text-rose-400 font-semibold">🗑️ Delete</button>
+            <span class="text-blue-400 font-bold">Button #${i + 1}</span>
+            <button type="button" onclick="removeButton(${i})" class="text-rose-400 hover:text-rose-300">🗑️ Delete</button>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${btn.label || ''}" placeholder="Button Label" oninput="currentEditButtons[${i}].label = this.value" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
-            <input type="text" value="${btn.target_step || ''}" placeholder="Target Step ID" oninput="currentEditButtons[${i}].target_step = this.value.trim().toLowerCase().replace(/\\s+/g, '_')" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2 font-mono">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">ခလုတ်နာမည်</label>
+              <input type="text" value="${btn.label || ''}" placeholder="ဥပမာ- HH → HL" oninput="currentEditButtons[${i}].label = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-amber-400 mb-0.5">Target Step ID</label>
+              <input type="text" value="${btn.target_step || ''}" placeholder="ဥပမာ- step2_hhtohl" oninput="currentEditButtons[${i}].target_step = this.value.trim().toLowerCase().replace(/\\s+/g, '_')" class="w-full bg-slate-900 border border-amber-500/40 rounded p-1.5 text-white font-mono">
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${btn.tag || ''}" placeholder="Tag" oninput="currentEditButtons[${i}].tag = this.value" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
-            <select onchange="currentEditButtons[${i}].tag_color = this.value" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
-              <option value="blue" ${btn.tag_color === 'blue' ? 'selected' : ''}>Blue</option>
-              <option value="green" ${btn.tag_color === 'green' ? 'selected' : ''}>Green</option>
-              <option value="red" ${btn.tag_color === 'red' ? 'selected' : ''}>Red</option>
-              <option value="amber" ${btn.tag_color === 'amber' ? 'selected' : ''}>Amber</option>
-            </select>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Tag</label>
+              <input type="text" value="${btn.tag || ''}" placeholder="UPTREND" oninput="currentEditButtons[${i}].tag = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Color</label>
+              <select onchange="currentEditButtons[${i}].tag_color = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+                <option value="blue" ${btn.tag_color === 'blue' ? 'selected' : ''}>Blue</option>
+                <option value="green" ${btn.tag_color === 'green' ? 'selected' : ''}>Green</option>
+                <option value="red" ${btn.tag_color === 'red' ? 'selected' : ''}>Red</option>
+                <option value="amber" ${btn.tag_color === 'amber' ? 'selected' : ''}>Amber</option>
+              </select>
+            </div>
           </div>
-          <input type="text" value="${btn.subtitle || ''}" placeholder="Subtitle" oninput="currentEditButtons[${i}].subtitle = this.value" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
-          <input type="text" value="${btn.image_url || ''}" placeholder="Image URL" oninput="currentEditButtons[${i}].image_url = this.value" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2">
+          <input type="text" value="${btn.subtitle || ''}" placeholder="Subtitle..." oninput="currentEditButtons[${i}].subtitle = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white text-[11px]">
+          <input type="text" value="${btn.image_url || ''}" placeholder="Image URL..." oninput="currentEditButtons[${i}].image_url = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white text-[11px]">
         `;
         container.appendChild(div);
       });
@@ -659,7 +637,7 @@
           if (insErr) throw insErr;
         }
 
-        alert(`Page '${pageId}' သိမ်းဆည်းပြီးပါပြီ!`);
+        alert(`Page '${pageId}' ကို သိမ်းဆည်းပြီးပါပြီ!`);
         closeAdminModal();
         await renderPage(pageId, false);
 
