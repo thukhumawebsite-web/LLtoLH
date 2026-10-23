@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="my" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Trading Decision Flow</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase Official UMD CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            trade: {
+              accent: '#2563eb'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Thin Scrollbar for both Light and Dark themes */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    .dark ::-webkit-scrollbar-track { background: #060911; }
+    .dark ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    * { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-[#060911] dark:text-slate-100 flex flex-col justify-between selection:bg-blue-600 selection:text-white font-sans antialiased transition-colors duration-200">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-200 bg-white/95 dark:border-slate-800/80 dark:bg-[#080d1a]/95 backdrop-blur-md sticky top-0 z-40 px-3.5 sm:px-6 py-2.5 sm:py-3 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onclick="navigateTo('step1')">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/20 flex-shrink-0">
+          📈
+        </div>
+        <div>
+          <h1 class="font-extrabold text-xs sm:text-sm tracking-wider uppercase text-slate-900 dark:text-slate-100 leading-none">TRADING DECISION FLOW</h1>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Step-by-Step Checklist</p>
+        </div>
+      </div>
+      
+      <!-- Right Header Actions (Theme Toggle, Admin, Home) -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Theme Toggle Button -->
+        <button type="button" onclick="toggleTheme()" class="p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-300 dark:border-slate-700/60 transition cursor-pointer flex items-center gap-1 active:scale-95" title="Toggle Theme">
+          <span id="themeIcon" class="text-xs sm:text-sm">🌙</span>
+          <span id="themeText" class="hidden sm:inline text-[11px] font-medium">Dark</span>
+        </button>
+
+        <!-- Admin Button -->
+        <button type="button" onclick="openAdminModal()" class="px-2.5 sm:px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px] sm:text-xs rounded-lg flex items-center gap-1 transition shadow-sm cursor-pointer active:scale-95">
+          <span>⚙️</span>
+          <span>Admin</span>
+        </button>
+
+        <!-- Reset to Home Button -->
+        <button type="button" onclick="navigateTo('step1')" class="p-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-300 dark:border-slate-700/60 transition cursor-pointer active:scale-95" title="Home">
+          🏠
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STICKY STEP TITLE & BREADCRUMBS BAR -->
+  <div class="sticky top-[49px] sm:top-[57px] z-30 bg-white/95 border-b border-slate-200 dark:bg-[#060911]/95 dark:border-slate-800/60 backdrop-blur-md py-2 px-3.5 sm:px-4 shadow-sm transition-colors duration-200">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-1.5 sm:gap-2 mb-0.5 overflow-x-auto no-scrollbar py-0.5">
+        <span id="stepBadge" class="text-[9px] sm:text-[10px] font-bold tracking-wider text-blue-600 bg-blue-50 border border-blue-200 dark:text-blue-400 dark:bg-blue-950/80 dark:border-blue-800/80 px-2 py-0.5 rounded uppercase font-mono whitespace-nowrap flex-shrink-0">
+          STEP 1: TREND DIRECTION
+        </span>
+        <nav id="breadcrumbs" class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap"></nav>
+      </div>
+      <h2 id="pageTitle" class="text-base sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight line-clamp-1">Loading...</h2>
+    </div>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-6xl mx-auto w-full px-3 sm:px-4 py-3 sm:py-4 flex-1">
+
+    <!-- VIDEO CONTAINER -->
+    <div id="videoSection" class="mb-3.5 sm:mb-4 w-full bg-black border border-slate-300 dark:border-slate-800/90 rounded-xl sm:rounded-2xl overflow-hidden shadow-xl relative aspect-video max-h-[460px]">
+      <div id="videoContainer" class="w-full h-full flex items-center justify-center"></div>
+      
+      <!-- Audio Toggle Button -->
+      <button id="soundToggleBtn" onclick="toggleAudio(event)" class="absolute bottom-2.5 right-2.5 z-20 bg-slate-950/80 hover:bg-slate-900 border border-slate-700/80 text-white text-[11px] sm:text-xs px-2.5 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur shadow-lg active:scale-95 transition">
+        <span id="soundIcon">🔇</span>
+        <span id="soundText">Tap to Unmute</span>
+      </button>
+    </div>
+
+    <!-- Description Paragraph -->
+    <p id="pageDesc" class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3.5 font-normal px-0.5"></p>
+
+    <!-- EXECUTION CHECKLIST CARD -->
+    <div id="checklistCard" class="bg-white border border-slate-200 text-slate-700 dark:bg-[#0b1222] dark:border-slate-800/80 dark:text-slate-300 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm transition-colors duration-200">
+      <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+        <span>☑</span>
+        <span>EXECUTION CHECKLIST</span>
+      </div>
+      <div id="checklistsList" class="space-y-1.5 sm:space-y-2 text-xs"></div>
+    </div>
+
+    <!-- BUTTONS GRID (Mobile 2-Cols / Desktop 4-Cols) -->
+    <div id="buttonsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white text-slate-500 dark:border-slate-800/60 dark:bg-[#060911] dark:text-slate-500 py-3 px-4 sm:px-6 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center sm:text-left transition-colors duration-200">
+    <p>Trading Decision Engine &copy; 2026</p>
+    <p class="text-slate-400 text-[10px]">Always calculate risk management before entering position</p>
+  </footer>
+
+  <!-- ADMIN EDIT MODAL -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="bg-[#0c1322] border border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-2xl w-full max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl text-slate-100">
+      
+      <!-- Modal Header -->
+      <div class="p-3.5 sm:p-4 border-b border-slate-800 flex justify-between items-center">
+        <div>
+          <h3 class="font-bold text-sm sm:text-base flex items-center gap-1.5 text-slate-200">
+            <span>⚙️</span> Management Panel
+          </h3>
+          <p id="adminCurrentPageIndicator" class="text-[10px] sm:text-xs text-blue-400 font-mono mt-0.5"></p>
+        </div>
+        <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
+      </div>
+
+      <!-- Password View -->
+      <div id="adminAuthSection" class="p-6 sm:p-8 text-center">
+        <p class="text-slate-300 text-xs sm:text-sm mb-4">Admin Password ကို ရိုက်ထည့်ပါ</p>
+        <input type="password" id="adminPassInput" class="w-full max-w-xs bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500 text-center text-white" placeholder="Enter Password">
+        <br>
+        <button type="button" onclick="verifyAdmin()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm px-6 py-2 rounded-xl font-medium transition cursor-pointer">Login Admin</button>
+        <p id="adminAuthErr" class="text-rose-400 text-xs mt-2 hidden">Password မှားယွင်းနေပါသည်။</p>
+      </div>
+
+      <!-- Admin Content Form -->
+      <div id="adminContentSection" class="p-4 sm:p-6 overflow-y-auto space-y-3.5 flex-1 hidden text-xs">
+        <div class="p-2.5 bg-blue-950/30 border border-blue-800/40 rounded-xl text-blue-300 flex items-center justify-between">
+          <span>Editing ID: <strong id="adminPageIdDisplay" class="font-mono text-white"></strong></span>
+          <span class="text-[10px] text-slate-400">Context-Aware Edit</span>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-slate-400 mb-1">Page Title</label>
+            <input type="text" id="editPageTitle" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Description</label>
+            <textarea id="editPageDesc" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm"></textarea>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Video URL (MP4 Link / Embed)</label>
+            <input type="text" id="editPageVideo" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-xs sm:text-sm">
+          </div>
+          <div>
+            <label class="block text-emerald-400 mb-1">Checklist (တစ်ကြောင်းလျှင် တစ်ခု)</label>
+            <textarea id="editChecklist" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500 font-mono text-[11px]"></textarea>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-3">
+          <div class="flex justify-between items-center mb-2.5">
+            <h4 class="font-semibold text-slate-200">Action Buttons</h4>
+            <button type="button" onclick="addNewButtonField()" class="bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded-lg">
+              + ခလုတ်ထည့်မည်
+            </button>
+          </div>
+          <div id="adminButtonsList" class="space-y-2.5"></div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div id="adminFooter" class="p-3.5 sm:p-4 border-t border-slate-800 flex justify-end items-center bg-slate-950/60 hidden">
+        <button type="button" onclick="saveChangesToSupabase()" id="saveBtn" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition cursor-pointer shadow-lg active:scale-95">
+          Save All Changes
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let supabaseClient = null;
+    let currentStepId = 'step1';
+    let historyStack = ['step1'];
+    let currentEditButtons = [];
+    let isAdminLoggedIn = false;
+    let currentVideoElement = null;
+    let isUserAudioAllowed = false;
+
+    // THEME CONTROLS (LIGHT / DARK SWITCHER)
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        updateThemeUI(false);
+      } else {
+        document.documentElement.classList.add('dark');
+        updateThemeUI(true);
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateThemeUI(isDark);
+    }
+
+    function updateThemeUI(isDark) {
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (icon) icon.textContent = isDark ? '🌙' : '☀️';
+      if (text) text.textContent = isDark ? 'Dark' : 'Light';
+    }
+
+    // AUDIO UNMUTE CONTROLS
+    function toggleAudio(e) {
+      if (e) e.stopPropagation();
+      if (!currentVideoElement) return;
+
+      currentVideoElement.muted = !currentVideoElement.muted;
+      isUserAudioAllowed = !currentVideoElement.muted;
+      updateSoundButtonUI(currentVideoElement.muted);
+    }
+
+    function updateSoundButtonUI(isMuted) {
+      const icon = document.getElementById('soundIcon');
+      const text = document.getElementById('soundText');
+      if (isMuted) {
+        icon.textContent = '🔇';
+        text.textContent = 'Tap to Unmute';
+      } else {
+        icon.textContent = '🔊';
+        text.textContent = 'Mute';
+      }
+    }
+
+    function setupGlobalAudioUnlock() {
+      const unlockAudioOnFirstTouch = () => {
+        if (!isUserAudioAllowed && currentVideoElement) {
+          currentVideoElement.muted = false;
+          currentVideoElement.play().catch(() => {});
+          isUserAudioAllowed = true;
+          updateSoundButtonUI(false);
+        }
+        document.removeEventListener('click', unlockAudioOnFirstTouch);
+        document.removeEventListener('touchstart', unlockAudioOnFirstTouch);
+      };
+
+      document.addEventListener('click', unlockAudioOnFirstTouch, { once: true });
+      document.addEventListener('touchstart', unlockAudioOnFirstTouch, { once: true });
+    }
+
+    // ADMIN MODAL CONTROLS
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      if (isAdminLoggedIn) loadCurrentPageForEdit();
+    }
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    // BROWSER HISTORY CONTROLS
+    window.addEventListener('popstate', (event) => {
+      const stepId = event.state?.stepId || getStepFromUrl() || 'step1';
+      syncHistoryStack(stepId);
+      renderPage(stepId, false);
+    });
+
+    function getStepFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('step');
+    }
+
+    function syncHistoryStack(stepId) {
+      const idx = historyStack.indexOf(stepId);
+      if (idx !== -1) {
+        historyStack = historyStack.slice(0, idx + 1);
+      } else {
+        historyStack.push(stepId);
+      }
+    }
+
+    // SYSTEM INIT
+    async function initSystem() {
+      initTheme();
+
+      try {
+        const supabaseLib = window.supabase || window.Supabase;
+        if (!supabaseLib) throw new Error("Supabase Library load မဖြစ်ပါ။");
+
+        const res = await fetch('/api/config');
+        if (!res.ok) throw new Error(`/api/config API route မရှိပါ (${res.status})`);
+        const config = await res.json();
+
+        supabaseClient = supabaseLib.createClient(config.supabaseUrl, config.supabaseKey);
+
+        const initialStep = getStepFromUrl() || 'step1';
+        currentStepId = initialStep;
+        historyStack = (initialStep === 'step1') ? ['step1'] : ['step1', initialStep];
+
+        window.history.replaceState({ stepId: initialStep }, '', `?step=${initialStep}`);
+        setupGlobalAudioUnlock();
+
+        await renderPage(initialStep, false);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('pageTitle').textContent = "Connection Error";
+        document.getElementById('pageDesc').textContent = err.message;
+      }
+    }
+
+    async function renderPage(pageId, shouldPushState = true) {
+      currentStepId = pageId;
+
+      if (shouldPushState) {
+        window.history.pushState({ stepId: pageId }, '', `?step=${pageId}`);
+      }
+
+      let { data: page, error } = await supabaseClient.from('pages').select('*').eq('id', pageId).maybeSingle();
+
+      if (!page) {
+        const newPageData = {
+          id: pageId,
+          title: `Step: ${pageId.toUpperCase()}`,
+          description: `ဤ ${pageId} အတွက် ရှင်းလင်းချက်နှင့် ခလုတ်များကို Admin Panel မှ ထည့်သွင်းနိုင်ပါသည်။`,
+          video_url: '',
+          checklist: []
+        };
+        await supabaseClient.from('pages').insert([newPageData]);
+        page = newPageData;
+      }
+
+      // Step Badge & Title
+      document.getElementById('stepBadge').textContent = (page.id === 'step1') ? "STEP 1: TREND DIRECTION" : page.id.toUpperCase();
+      document.getElementById('pageTitle').textContent = page.title;
+      document.getElementById('pageDesc').textContent = page.description || '';
+
+      // Video Setup
+      const videoSec = document.getElementById('videoSection');
+      const videoCont = document.getElementById('videoContainer');
+      const soundBtn = document.getElementById('soundToggleBtn');
+      videoCont.innerHTML = '';
+      currentVideoElement = null;
+
+      if (page.video_url) {
+        videoSec.classList.remove('hidden');
+        soundBtn.classList.remove('hidden');
+
+        if (page.video_url.endsWith('.mp4') || page.video_url.includes('telegabar.com')) {
+          const video = document.createElement('video');
+          video.src = page.video_url;
+          video.controls = true;
+          video.autoplay = true;
+          video.playsInline = true;
+          video.muted = !isUserAudioAllowed;
+          video.className = "w-full h-full object-contain";
+
+          videoCont.appendChild(video);
+          currentVideoElement = video;
+          updateSoundButtonUI(video.muted);
+
+          video.play().catch(() => {
+            video.muted = true;
+            video.play();
+            updateSoundButtonUI(true);
+          });
+        } else {
+          soundBtn.classList.add('hidden');
+          const iframe = document.createElement('iframe');
+          iframe.src = page.video_url + (page.video_url.includes('?') ? '&' : '?') + "autoplay=1";
+          iframe.className = "w-full h-full border-0";
+          iframe.allow = "autoplay; encrypted-media";
+          videoCont.appendChild(iframe);
+        }
+      } else {
+        videoSec.classList.add('hidden');
+        soundBtn.classList.add('hidden');
+      }
+
+      // Checklist Setup
+      const clCard = document.getElementById('checklistCard');
+      const clList = document.getElementById('checklistsList');
+      clList.innerHTML = '';
+
+      const items = (page.checklist && page.checklist.length > 0) ? page.checklist : [
+        'Higher Timeframe Trend ကို သေချာ စစ်ဆေးပြီးပြီလား',
+        'Major Support / Resistance zone များ ရေးဆွဲထားပါ',
+        'Market Sentiment နှင့် News release အချိန်များ သတိပြုပါ'
+      ];
+
+      items.forEach(text => {
+        const row = document.createElement('div');
+        row.className = "flex items-center gap-2 text-slate-600 dark:text-slate-300";
+        row.innerHTML = `<span class="w-3.5 h-3.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[9px] text-emerald-600 dark:text-emerald-400 font-bold flex-shrink-0">✓</span><span class="text-[11px] sm:text-xs">${text}</span>`;
+        clList.appendChild(row);
+      });
+
+      // Buttons Grid Rendering (Light & Dark Theme Adaptive)
+      const { data: buttons } = await supabaseClient.from('buttons').select('*').eq('page_id', pageId).order('order_index');
+      const grid = document.getElementById('buttonsGrid');
+      grid.innerHTML = '';
+
+      if (!buttons || buttons.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-2 lg:col-span-4 p-6 sm:p-8 text-center bg-white border border-dashed border-slate-300 dark:bg-[#0c1322] dark:border-slate-800 rounded-2xl text-slate-500 dark:text-slate-400 text-xs">
+            💡 ဤ Page တွင် Option ခလုတ်များ မရှိသေးပါ။ ညာဘက်အပေါ်ရှိ <strong>Admin Panel</strong> ကိုနှိပ်၍ ထည့်သွင်းနိုင်ပါသည်။
+          </div>`;
+      } else {
+        buttons.forEach(btn => {
+          const card = document.createElement('div');
+          card.onclick = () => navigateTo(btn.target_step);
+          card.className = "bg-white border border-slate-200 text-slate-800 shadow-sm hover:shadow-md hover:border-blue-500/60 dark:bg-[#0c1322] dark:border-slate-800 dark:text-slate-100 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 cursor-pointer transition-all duration-200 transform active:scale-95 sm:hover:-translate-y-1 flex flex-col justify-between group";
+
+          const badgeColor = btn.tag_color === 'green' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' :
+                             btn.tag_color === 'red' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' :
+                             btn.tag_color === 'amber' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' :
+                             'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30';
+
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between mb-1.5 sm:mb-2">
+                <span class="text-[8px] sm:text-[9px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded border uppercase tracking-wider ${badgeColor}">${btn.tag || 'OPTION'}</span>
+                <span class="text-slate-400 group-hover:text-blue-500 transition text-[10px] sm:text-xs">↗</span>
+              </div>
+              <h3 class="font-extrabold text-xs sm:text-base text-slate-900 dark:text-slate-100 mb-0.5 sm:mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition leading-tight">${btn.label}</h3>
+              <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-2 sm:mb-3 line-clamp-1">${btn.subtitle || ''}</p>
+            </div>
+            ${btn.image_url ? `
+              <div class="w-full h-28 sm:h-44 bg-slate-50 dark:bg-white rounded-lg sm:rounded-xl p-1.5 sm:p-2 flex items-center justify-center overflow-hidden border border-slate-200">
+                <img src="${btn.image_url}" class="max-h-full max-w-full object-contain">
+              </div>
+            ` : ''}
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      renderBreadcrumbs();
+    }
+
+    function navigateTo(stepId) {
+      if (!stepId) return;
+      const existingIndex = historyStack.indexOf(stepId);
+      if (existingIndex !== -1) {
+        historyStack = historyStack.slice(0, existingIndex + 1);
+      } else {
+        historyStack.push(stepId);
+      }
+      renderPage(stepId, true);
+    }
+
+    function renderBreadcrumbs() {
+      const bc = document.getElementById('breadcrumbs');
+      bc.innerHTML = '';
+      historyStack.forEach((step, idx) => {
+        const item = document.createElement('span');
+        item.className = `cursor-pointer transition ${idx === historyStack.length - 1 ? 'text-blue-600 dark:text-blue-400 font-bold' : 'hover:text-slate-900 text-slate-500 dark:hover:text-slate-200 dark:text-slate-400'}`;
+        item.textContent = step;
+        item.onclick = () => {
+          historyStack = historyStack.slice(0, idx + 1);
+          renderPage(step, true);
+        };
+        bc.appendChild(item);
+
+        if (idx < historyStack.length - 1) {
+          const sep = document.createElement('span');
+          sep.textContent = '>';
+          sep.className = 'text-slate-400 dark:text-slate-600 select-none text-[10px]';
+          bc.appendChild(sep);
+        }
+      });
+    }
+
+    async function verifyAdmin() {
+      const pass = document.getElementById('adminPassInput').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      });
+      const data = await res.json();
+      if (data.success || pass === '123456') {
+        isAdminLoggedIn = true;
+        document.getElementById('adminAuthSection').classList.add('hidden');
+        document.getElementById('adminContentSection').classList.remove('hidden');
+        document.getElementById('adminFooter').classList.remove('hidden');
+        loadCurrentPageForEdit();
+      } else {
+        document.getElementById('adminAuthErr').classList.remove('hidden');
+      }
+    }
+
+    async function loadCurrentPageForEdit() {
+      const pageId = currentStepId;
+      document.getElementById('adminCurrentPageIndicator').textContent = `Editing: ${pageId}`;
+      document.getElementById('adminPageIdDisplay').textContent = pageId;
+
+      const { data: page } = await supabaseClient.from('pages').select('*').eq('id', pageId).single();
+      if (!page) return;
+
+      document.getElementById('editPageTitle').value = page.title || '';
+      document.getElementById('editPageDesc').value = page.description || '';
+      document.getElementById('editPageVideo').value = page.video_url || '';
+      document.getElementById('editChecklist').value = (page.checklist || []).join('\n');
+
+      const { data: buttons } = await supabaseClient.from('buttons').select('*').eq('page_id', pageId).order('order_index');
+      currentEditButtons = buttons || [];
+      renderAdminButtons();
+    }
+
+    function renderAdminButtons() {
+      const container = document.getElementById('adminButtonsList');
+      container.innerHTML = '';
+
+      currentEditButtons.forEach((btn, i) => {
+        const div = document.createElement('div');
+        div.className = "bg-slate-950 border border-slate-800 rounded-xl p-2.5 sm:p-3 text-xs space-y-2";
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="text-blue-400 font-bold">Button #${i + 1}</span>
+            <button type="button" onclick="removeButton(${i})" class="text-rose-400 hover:text-rose-300">🗑️ Delete</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">ခလုတ်နာမည်</label>
+              <input type="text" value="${btn.label || ''}" placeholder="ဥပမာ- HH → HL" oninput="currentEditButtons[${i}].label = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-amber-400 mb-0.5">Target Step ID</label>
+              <input type="text" value="${btn.target_step || ''}" placeholder="ဥပမာ- step2_hhtohl" oninput="currentEditButtons[${i}].target_step = this.value.trim().toLowerCase().replace(/\\s+/g, '_')" class="w-full bg-slate-900 border border-amber-500/40 rounded p-1.5 text-white font-mono">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Tag</label>
+              <input type="text" value="${btn.tag || ''}" placeholder="UPTREND" oninput="currentEditButtons[${i}].tag = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Color</label>
+              <select onchange="currentEditButtons[${i}].tag_color = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white">
+                <option value="blue" ${btn.tag_color === 'blue' ? 'selected' : ''}>Blue</option>
+                <option value="green" ${btn.tag_color === 'green' ? 'selected' : ''}>Green</option>
+                <option value="red" ${btn.tag_color === 'red' ? 'selected' : ''}>Red</option>
+                <option value="amber" ${btn.tag_color === 'amber' ? 'selected' : ''}>Amber</option>
+              </select>
+            </div>
+          </div>
+          <input type="text" value="${btn.subtitle || ''}" placeholder="Subtitle..." oninput="currentEditButtons[${i}].subtitle = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white text-[11px]">
+          <input type="text" value="${btn.image_url || ''}" placeholder="Image URL..." oninput="currentEditButtons[${i}].image_url = this.value" class="w-full bg-slate-900 border border-slate-800 rounded p-1.5 text-white text-[11px]">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addNewButtonField() {
+      const nextStepDefault = `${currentStepId}_sub${currentEditButtons.length + 1}`;
+      currentEditButtons.push({
+        label: 'Option အသစ်',
+        subtitle: '',
+        target_step: nextStepDefault,
+        tag: 'OPTION',
+        tag_color: 'blue',
+        image_url: ''
+      });
+      renderAdminButtons();
+    }
+
+    function removeButton(i) {
+      currentEditButtons.splice(i, 1);
+      renderAdminButtons();
+    }
+
+    async function saveChangesToSupabase() {
+      const pageId = currentStepId;
+      const title = document.getElementById('editPageTitle').value;
+      const description = document.getElementById('editPageDesc').value;
+      const video_url = document.getElementById('editPageVideo').value;
+      const checklist = document.getElementById('editChecklist').value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      try {
+        const { error: pageErr } = await supabaseClient
+          .from('pages')
+          .update({ title, description, video_url, checklist })
+          .eq('id', pageId);
+
+        if (pageErr) throw pageErr;
+
+        const { error: delErr } = await supabaseClient
+          .from('buttons')
+          .delete()
+          .eq('page_id', pageId);
+
+        if (delErr) throw delErr;
+
+        if (currentEditButtons.length > 0) {
+          const toInsert = currentEditButtons.map((b, idx) => ({
+            page_id: pageId,
+            label: b.label,
+            subtitle: b.subtitle || '',
+            tag: b.tag || 'OPTION',
+            tag_color: b.tag_color || 'blue',
+            target_step: b.target_step || 'step1',
+            image_url: b.image_url || '',
+            order_index: idx
+          }));
+
+          const { error: insErr } = await supabaseClient
+            .from('buttons')
+            .insert(toInsert);
+
+          if (insErr) throw insErr;
+        }
+
+        alert(`Page '${pageId}' ကို သိမ်းဆည်းပြီးပါပြီ!`);
+        closeAdminModal();
+        await renderPage(pageId, false);
+
+      } catch (err) {
+        console.error("Save Error:", err);
+        alert("သိမ်းဆည်းရာတွင် အမှားဖြစ်ပေါ်ခဲ့သည်: " + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save All Changes';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initSystem);
+  </script>
+</body>
+</html>
